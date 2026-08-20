@@ -2,9 +2,9 @@
 
 ## Purpose
 
-This document defines how Companion Core stores persistent information.
+Этот документ определяет, как Companion Core хранит постоянную информацию.
 
-The storage model follows the principle that historical facts, structured knowledge and current operational state are different layers.
+Модель разделяет исторические факты, структурированные знания, текущее состояние и контекст выполнения.
 
 ---
 
@@ -12,37 +12,35 @@ The storage model follows the principle that historical facts, structured knowle
 
 ## Immutable history
 
-Some data represents facts and should not be overwritten.
+Некоторые данные являются фактами и не должны перезаписываться.
 
-Examples:
+Примеры:
 
 - Events;
 - Archive items;
 - Evidence.
 
-Corrections create new records instead of rewriting history.
+Исправления создают новые записи.
 
 ---
 
 ## Structured memory
 
-Structured objects represent interpreted knowledge.
+Структурированные объекты представляют интерпретированные знания.
 
-Examples:
+Примеры:
 
 - Decisions;
 - WorkItems;
-- Relationships between entities.
-
-They may evolve, but previous states remain traceable.
+- связи между сущностями.
 
 ---
 
 ## Operational state
 
-Current state is a working projection used for daily operation.
+Current State используется для ежедневной работы.
 
-It can be regenerated from historical data and structured memory.
+Он может быть восстановлен из истории и структурированной памяти.
 
 ---
 
@@ -52,12 +50,11 @@ MVP target:
 
 SQLite.
 
-Reasons:
+Причины:
 
-- single portable database file;
-- suitable for VPS, desktop and embedded systems;
-- easy backup and migration;
-- no additional database service required.
+- один переносимый файл;
+- подходит для VPS, desktop и embedded-систем;
+- простой backup и миграция.
 
 ---
 
@@ -65,129 +62,122 @@ Reasons:
 
 ## Project
 
-Stores project identity.
-
-Fields:
-
-- id;
-- name;
-- description;
-- timestamps.
+Хранит идентичность проекта.
 
 ---
 
 ## Workspace
 
-Stores concrete environments.
+Хранит конкретные окружения.
 
-Examples:
+Примеры:
 
 - GitHub repository;
 - VPS;
 - development PC;
 - hardware device.
 
-Relations:
-
-Project → Workspace
-
 ---
 
 ## WorkItem
 
-Stores units of work.
-
-Sources may include:
-
-- GitHub;
-- local tasks;
-- manual input;
-- external systems.
+Хранит единицы работы из разных источников.
 
 ---
 
 ## Event
 
-The main historical record.
+Основная историческая запись.
 
-Stores:
+Хранит:
 
-- id;
-- project reference;
-- timestamp;
-- event type;
-- source;
-- payload.
+- идентификатор;
+- проект;
+- время;
+- тип события;
+- источник;
+- данные.
 
-Events are append-only.
+Events являются append-only.
 
 ---
 
 ## Decision
 
-Stores accepted conclusions.
-
-Contains:
-
-- statement;
-- reasoning;
-- source;
-- evidence references;
-- status.
+Хранит принятые решения.
 
 ---
 
 ## Evidence
 
-Stores supporting materials.
-
-Examples:
-
-- commit SHA;
-- file;
-- log;
-- screenshot;
-- conversation extract.
+Хранит подтверждающие материалы.
 
 ---
 
 ## ArchiveItem
 
-Stores raw source materials.
+Хранит исходные материалы.
 
-Examples:
-
-- exported conversations;
-- raw logs;
-- external documents.
-
-Archive is not generated from structured memory.
-
-Structured memory may be rebuilt from Archive.
+Structured Memory может быть перестроена из Archive.
 
 ---
 
 ## Conversation
 
-Stores conversation metadata.
+Хранит метаданные разговоров.
 
-Supports:
+Поддерживает:
 
-- source tracking;
-- chat branches;
-- links to archived content.
+- источники;
+- ветвление чатов;
+- связь с архивом.
+
+---
+
+## ExecutionContext
+
+Хранит информацию о доступных возможностях выполнения действий.
+
+ExecutionContext связывает состояние проекта с реальными возможностями среды.
+
+Пример:
+
+```yaml
+execution_context:
+  repository:
+    name: genrudko/Plugins_AD5X
+
+  access:
+    github: true
+
+  capabilities:
+    read_files: true
+    write_files: true
+    run_tests: true
+
+  last_verified:
+    commit: 3b5dfc...
+```
+
+ExecutionContext должен учитывать не только права доступа, но и фактическую доступность исполнителей.
 
 ---
 
 ## Snapshot
 
-Stores a point-in-time project state.
+Хранит состояние проекта в конкретный момент времени.
 
-Purpose:
+Snapshot включает:
 
-- fast context restoration;
-- handoff between sessions;
-- recovery after interruptions.
+- Project State;
+- Execution Context;
+- Tool Binding.
+
+Назначение:
+
+- быстрое восстановление контекста;
+- handoff между сессиями;
+- восстановление после перерывов.
 
 ---
 
@@ -202,6 +192,8 @@ Project
  +-- Decision
  |       |
  |       +-- Evidence
+ |
+ +-- ExecutionContext
  |
  +-- Snapshot
 
@@ -224,7 +216,8 @@ Required:
 - Decision;
 - Evidence;
 - ArchiveItem;
-- Snapshot.
+- Snapshot;
+- ExecutionContext.
 
 Deferred:
 
