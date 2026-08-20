@@ -221,6 +221,45 @@ It is a source from which decisions, evidence, events and context can be extract
 
 ---
 
+# Archive
+
+## Definition
+
+An Archive stores original source materials without modification.
+
+Archive exists as an emergency recovery layer and historical record.
+
+Examples:
+
+- exported conversations;
+- raw logs;
+- original reports;
+- imported documents.
+
+## Purpose
+
+Structured memory may contain extracted knowledge, but Archive preserves the original source in case extraction was incomplete or incorrect.
+
+Example:
+
+```
+Raw conversation archive
+        |
+        v
+Analysis / extraction
+        |
+        v
+Decision and Snapshot
+```
+
+Archive is not the same as current state.
+
+It answers the question:
+
+"What information did we actually have at that moment?"
+
+---
+
 # Agent
 
 ## Definition
@@ -285,7 +324,8 @@ Required:
 - Event;
 - Decision;
 - Evidence;
-- Snapshot.
+- Snapshot;
+- Archive.
 
 Deferred:
 
